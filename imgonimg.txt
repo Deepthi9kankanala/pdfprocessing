@@ -1,0 +1,35 @@
+import fitz
+
+def replace_image(pdf_path, new_image_path):
+    # Open the PDF document
+    doc = fitz.open(pdf_path)
+
+    # Iterate through each page of the document
+    for page_number in range(len(doc)):
+        page = doc.load_page(page_number)
+        # Get the width and height of the page
+        page_width = page.rect.width
+        page_height = page.rect.height
+
+        # Calculate image coordinates
+        img_width = 40
+        img_height = 50
+        x0 = page_width - img_width - 100  # 20 points margin from the right edge
+        y0 = page_height - img_height - 10  # 20 points margin from the top edge
+
+        # Define the rectangle where the old image is located
+        old_image_coords = (x0, y0, x0 + img_width, y0 + img_height)
+
+        # Insert the new image in the same location
+        page.insert_image(
+            fitz.Rect(*old_image_coords),
+            filename=new_image_path,
+            rotate=0  # No rotation
+        )
+
+    # Save the modified document
+    doc.save("output.pdf")
+    doc.close()
+
+# Example usage to replace the inserted image in the PDF
+replace_image("inserted_image.pdf", "replaceimg.png")
